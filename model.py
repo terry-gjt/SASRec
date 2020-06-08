@@ -8,6 +8,12 @@ class Model():
         self.input_seq = tf.placeholder(tf.int32, shape=(None, args.maxlen))
         self.pos = tf.placeholder(tf.int32, shape=(None, args.maxlen))
         self.neg = tf.placeholder(tf.int32, shape=(None, args.maxlen))
+        #terry 20200528修改
+        # self.is_training = tf.compat.v1.placeholder(tf.bool, shape=())
+        # self.u = tf.compat.v1.placeholder(tf.int32, shape=(None))
+        # self.input_seq = tf.compat.v1.placeholder(tf.int32, shape=(None, args.maxlen))
+        # self.pos = tf.compat.v1.placeholder(tf.int32, shape=(None, args.maxlen))
+        # self.neg = tf.compat.v1.placeholder(tf.int32, shape=(None, args.maxlen))
         pos = self.pos
         neg = self.neg
         mask = tf.expand_dims(tf.to_float(tf.not_equal(self.input_seq, 0)), -1)

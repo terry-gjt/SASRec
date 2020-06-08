@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 import argparse
@@ -16,7 +17,8 @@ def str2bool(s):
     return s == 'True'
 
 if __name__ == '__main__':
-
+    start = datetime.datetime.now()
+    print("运行开始:%s"%start)
     parser = argparse.ArgumentParser()
     # parser.add_argument('--dataset', required=True)
     # parser.add_argument('--train_dir', required=True)
@@ -44,21 +46,21 @@ if __name__ == '__main__':
 
     dataset = data_partition(args.dataset)
     [user_train, user_valid, user_test, usernum, itemnum] = dataset
-    num_batch = len(user_train) / args.batch_size
+    num_batch = len(user_train) // args.batch_size #20200607 terry修改
     cc = 0.0
     for u in user_train:
         cc += len(user_train[u])
     print('average sequence length: %.2f' % (cc / len(user_train)))
 
     f = open(os.path.join(args.dataset + '_' + args.train_dir, 'log.txt'), 'w')
-    # config = tf.ConfigProto()
+    config = tf.ConfigProto()
     #terry 20200528修改
-    config = tf.compat.v1.ConfigProto()
+    # config = tf.compat.v1.ConfigProto()
     config.gpu_options.allow_growth = True
     config.allow_soft_placement = True
-    # sess = tf.Session(config=config)
+    sess = tf.Session(config=config)
     #terry 20200528修改
-    sess = tf.compat.v1.Session(config=config)
+    # sess = tf.compat.v1.Session(config=config)
     sampler = WarpSampler(user_train, usernum, itemnum, batch_size=args.batch_size, maxlen=args.maxlen, n_workers=3)
     model = Model(usernum, itemnum, args)
     sess.run(tf.initialize_all_variables())
@@ -68,6 +70,7 @@ if __name__ == '__main__':
 
     try:
         for epoch in range(1, args.num_epochs + 1):
+        # for epoch in range(1, 2):
 
             for step in tqdm(list(range(num_batch)), total=num_batch, ncols=70, leave=False, unit='b'):
                 u, seq, pos, neg = sampler.next_batch()
@@ -78,7 +81,7 @@ if __name__ == '__main__':
             if epoch % 20 == 0:
                 t1 = time.time() - t0
                 T += t1
-                print('Evaluating', end=' ')
+                print('Evaluating')
                 t_test = evaluate(model, dataset, args, sess)
                 t_valid = evaluate_valid(model, dataset, args, sess)
                 print('')
@@ -88,11 +91,14 @@ if __name__ == '__main__':
                 f.write(str(t_valid) + ' ' + str(t_test) + '\n')
                 f.flush()
                 t0 = time.time()
-    except:
+    except Exception:
         sampler.close()
         f.close()
+            # print(Exception.args)
         exit(1)
 
     f.close()
     sampler.close()
-    print("Done")
+    end = datetime.datetime.now()
+    print('运行完成，运行时间:: %s 秒' % (end - start))
+
