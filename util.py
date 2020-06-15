@@ -29,7 +29,7 @@ def data_partition(fname):
             user_valid[user] = []
             user_test[user] = []
         else:
-            user_train[user] = User[user][:-2]
+            user_train[user] = User[user][:-2]#去掉后两位
             user_valid[user] = []
             user_valid[user].append(User[user][-2])
             user_test[user] = []

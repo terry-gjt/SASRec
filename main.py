@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--l2_emb', default=0.0, type=float)
 
     args = parser.parse_args()
-    if not os.path.isdir(args.dataset + '_' + args.train_dir):
+    if not os.path.isdir(args.dataset + '_' + args.train_dir):#判断文件目录是否存在，不存在就创建
         os.makedirs(args.dataset + '_' + args.train_dir)
     with open(os.path.join(args.dataset + '_' + args.train_dir, 'args.txt'), 'w') as f:
         f.write('\n'.join([str(k) + ',' + str(v) for k, v in sorted(list(vars(args).items()), key=lambda x: x[0])]))
@@ -70,6 +70,7 @@ if __name__ == '__main__':
 
     try:
         for epoch in range(1, args.num_epochs + 1):
+        # for epoch in tqdm(list(range(1, 5)), total=num_batch, ncols=70, leave=False, unit='个'):#试了下，无法实现双进度条
         # for epoch in range(1, 2):
 
             for step in tqdm(list(range(num_batch)), total=num_batch, ncols=70, leave=False, unit='b'):
@@ -100,5 +101,6 @@ if __name__ == '__main__':
     f.close()
     sampler.close()
     end = datetime.datetime.now()
-    print('运行完成，运行时间:: %s 秒' % (end - start))
+    print("运行完成: %s" % end)
+    print('运行时间: %s 秒' % (end - start))
 
