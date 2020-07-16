@@ -1,3 +1,4 @@
+# 我下载之后更改了一下运行环境，现在的运行环境是python3.6，其他没变，可以运行起来
 # SASRec: Self-Attentive Sequential Recommendation
 
 This is our TensorFlow implementation for the paper:
